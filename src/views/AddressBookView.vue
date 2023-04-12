@@ -4,115 +4,56 @@
       <v-data-table
         v-model:items-per-page="itemsPerPage"
         :headers="headers"
-        :items="desserts"
-        item-value="name"
+        :items="datafields"
+        item-value="ID"
         class="elevation-1"
-      ></v-data-table>
+      >
+      <template v-slot:item.haveKids="{ item }">
+        <v-icon v-if="item.raw.haveKids == 'TRUE'" color="green-darken-2" icon="mdi-check"></v-icon>
+        <v-icon v-else color="red-darken-2" icon="mdi-close"></v-icon>
+      </template>
+      <template v-slot:item.joviality="{ item }">
+        <v-icon v-if="item.raw.joviality > 0.75" color="green-darken-2" icon="mdi-emoticon"></v-icon>
+        <v-icon v-else-if="item.raw.joviality > 0.5" color="yellow-darken-2" icon="mdi-emoticon-neutral"></v-icon>
+        <v-icon v-else-if="item.raw.joviality > 0.25" color="orange-darken-2" icon="mdi-emoticon-sad"></v-icon>
+        <v-icon v-else color="red-darken-2" icon="mdi-emoticon-dead"></v-icon>
+      </template>
+      </v-data-table>
     </v-card>
   </div>
 </template>
 
 <script>
+import * as d3 from 'd3'
+
   export default {
     data () {
       return {
         itemsPerPage: 10,
         headers: [
           {
-            title: 'Dessert (100g serving)',
+            title: 'ID',
             align: 'start',
             sortable: false,
-            key: 'name',
+            key: 'participantId',
           },
-          { title: 'Calories', align: 'end', key: 'calories' },
-          { title: 'Fat (g)', align: 'end', key: 'fat' },
-          { title: 'Carbs (g)', align: 'end', key: 'carbs' },
-          { title: 'Protein (g)', align: 'end', key: 'protein' },
-          { title: 'Iron (%)', align: 'end', key: 'iron' },
+          { title: 'Household size', align: 'end', key: 'householdSize' },
+          { title: 'Kids', align: 'end', key: 'haveKids' },
+          { title: 'Age', align: 'end', key: 'age' },
+          { title: 'Education', align: 'end', key: 'educationLevel' },
+          { title: 'Interest group', align: 'end', key: 'interestGroup' },
+          { title: 'Joviality', align: 'end', key: 'joviality' },
         ],
-        desserts: [
-          {
-            name: 'Frozen Yogurt',
-            calories: 159,
-            fat: 6.0,
-            carbs: 24,
-            protein: 4.0,
-            iron: '1',
-          },
-          {
-            name: 'Jelly bean',
-            calories: 375,
-            fat: 0.0,
-            carbs: 94,
-            protein: 0.0,
-            iron: '0',
-          },
-          {
-            name: 'KitKat',
-            calories: 518,
-            fat: 26.0,
-            carbs: 65,
-            protein: 7,
-            iron: '6',
-          },
-          {
-            name: 'Eclair',
-            calories: 262,
-            fat: 16.0,
-            carbs: 23,
-            protein: 6.0,
-            iron: '7',
-          },
-          {
-            name: 'Gingerbread',
-            calories: 356,
-            fat: 16.0,
-            carbs: 49,
-            protein: 3.9,
-            iron: '16',
-          },
-          {
-            name: 'Ice cream sandwich',
-            calories: 237,
-            fat: 9.0,
-            carbs: 37,
-            protein: 4.3,
-            iron: '1',
-          },
-          {
-            name: 'Lollipop',
-            calories: 392,
-            fat: 0.2,
-            carbs: 98,
-            protein: 0,
-            iron: '2',
-          },
-          {
-            name: 'Cupcake',
-            calories: 305,
-            fat: 3.7,
-            carbs: 67,
-            protein: 4.3,
-            iron: '8',
-          },
-          {
-            name: 'Honeycomb',
-            calories: 408,
-            fat: 3.2,
-            carbs: 87,
-            protein: 6.5,
-            iron: '45',
-          },
-          {
-            name: 'Donut',
-            calories: 452,
-            fat: 25.0,
-            carbs: 51,
-            protein: 4.9,
-            iron: '22',
-          },
-        ],
+        datafields: [],
       }
+    },
+    async mounted () {
+      d3.csv('datasets/tables/Participants.csv')
+      .then((rows) => {
+        this.datafields = rows
+      });
+    },
+    methods: {
     },
   }
 </script>
