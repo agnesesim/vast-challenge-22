@@ -1,6 +1,5 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
 </script>
 
 <template>
@@ -21,7 +20,7 @@ import HelloWorld from './components/HelloWorld.vue'
         <v-divider></v-divider>
         <v-list density="compact" nav>
           <v-list-item prepend-icon="mdi-home-city" title="Home" value="home" to="/"></v-list-item>
-          <v-list-item prepend-icon="mdi-account" title="Address book" value="addressbook" to="/addressbook"></v-list-item>
+          <v-list-item prepend-icon="mdi-account" title="Address book" value="abitanti" to="/abitanti"></v-list-item>
         </v-list>
       </v-navigation-drawer>
     <v-app-bar
