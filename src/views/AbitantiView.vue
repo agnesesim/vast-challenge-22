@@ -106,12 +106,13 @@
           :neutral="neutralSelected"
           :sad="sadSelected"
           :dead="deadSelected"
+          :functionEdit="editItem"
         ></ParticipantTable>
       </v-col>
     </v-row>
     <v-row class="my-1">
       <v-col>
-        <ParticipantCard :participantId="1"></ParticipantCard>
+        <ParticipantCard :participant="participantSelected"></ParticipantCard>
       </v-col>
     </v-row>
   </div>
@@ -143,6 +144,7 @@ import ParticipantTable from '../components/ParticipantTable.vue'
         sadColor: 'orange-darken-2',
         deadSelected: true,
         deadColor: 'red-darken-2',
+        participantSelected: {},
       }
     },
     methods: {
@@ -165,6 +167,9 @@ import ParticipantTable from '../components/ParticipantTable.vue'
             this.deadColor = this.deadSelected ? 'red-darken-2' : 'grey-darken-2'
             break;
         }
+      },
+      editItem (item) {
+          this.participantSelected = item
       }
     },
   }

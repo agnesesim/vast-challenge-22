@@ -18,7 +18,7 @@
             <v-icon v-else color="red-darken-2" icon="mdi-emoticon-dead"></v-icon>
         </template>
         <template v-slot:item.actions="{ item }">
-            <v-btn variant="tonal" color="primary" icon="mdi-plus" size="x-small" density="comfortable" @click="editItem(item.raw)"></v-btn>
+            <v-btn variant="tonal" color="primary" icon="mdi-plus" size="x-small" density="comfortable" @click="functionEdit(item.raw)"></v-btn>
         </template>
         </v-data-table>
     </v-card>
@@ -48,7 +48,6 @@ export default{
             ],
             datafields_all: [],
             datafields: [],
-            participantSelected: 0,
         }
     },
     props:{
@@ -61,6 +60,7 @@ export default{
         neutral: Boolean,
         sad: Boolean,
         dead: Boolean,
+        functionEdit: Function
     },
     async mounted () {
         d3.csv('datasets/tables/Participants.csv')
@@ -71,7 +71,6 @@ export default{
     },
     methods:{
         filterTable(){
-            console.log(this.education)
             this.datafields = this.datafields_all
                 .filter(d=> this.education == null ? d : d.educationLevel == this.education )
                 .filter(d=> this.group == null ? d : d.interestGroup == this.group )
@@ -82,9 +81,6 @@ export default{
                 .filter(d=> this.neutral? d : d.joviality >= 0.75 || d.joviality < 0.50)
                 .filter(d=> this.sad? d : d.joviality >= 0.50 || d.joviality < 0.25)
                 .filter(d=> this.dead? d : d.joviality >= 0.25 )
-        },
-        editItem (item) {
-            console.log(this.datafields.indexOf(item))
         }
     },
     watch:{

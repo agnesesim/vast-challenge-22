@@ -17,29 +17,8 @@
             <v-list-item
               key="age"
               title="Age"
-              subtitle="23 anni"
+              :subtitle="participant.age + ' anni'"
             ></v-list-item>
-            <v-list-item
-              key="age"
-              title="Age"
-              subtitle="23 anni"
-            ></v-list-item>
-            <v-list-item
-              key="age"
-              title="Age"
-              subtitle="23 anni"
-            ></v-list-item>
-            <v-list-item
-              key="age"
-              title="Age"
-              subtitle="23 anni"
-            ></v-list-item>
-            <v-list-item
-              key="age"
-              title="Age"
-              subtitle="23 anni"
-            ></v-list-item>
-          
           </v-list>
         </v-col>
       </v-row>
@@ -52,8 +31,7 @@
 export default {
     name: "ParticipantCard",
     props:{
-        participantId: Number,
-        //participant: Object,
+        participant: Object,
     },
     data(){
       return {}
