@@ -46,12 +46,12 @@ export default {
         },
         {
           title: 'Relazioni',
-          link: `AbitantiView`,
+          link: `relazioni`,
           img: 'src\\assets\\icons\\network.png',
         },
         {
           title: 'Demografia',
-          link: `AbitantiView`,
+          link: `demografia`,
           img: 'src\\assets\\icons\\people.png',
         },
         {
