@@ -1,27 +1,25 @@
 <template>
-    <v-card>
-        <v-data-table
-        v-model:items-per-page="itemsPerPage"
-        :headers="headers"
-        :items="datafields"
-        item-value="ID"
-        class="elevation-1"
-        >
-        <template v-slot:item.haveKids="{ item }">
-            <v-icon v-if="item.raw.haveKids == 'TRUE'" color="green-darken-2" icon="mdi-check"></v-icon>
-            <v-icon v-else color="red-darken-2" icon="mdi-close"></v-icon>
-        </template>
-        <template v-slot:item.joviality="{ item }">
-            <v-icon v-if="item.raw.joviality > 0.75" color="green-darken-2" icon="mdi-emoticon"></v-icon>
-            <v-icon v-else-if="item.raw.joviality > 0.5" color="yellow-darken-2" icon="mdi-emoticon-neutral"></v-icon>
-            <v-icon v-else-if="item.raw.joviality > 0.25" color="orange-darken-2" icon="mdi-emoticon-sad"></v-icon>
-            <v-icon v-else color="red-darken-2" icon="mdi-emoticon-dead"></v-icon>
-        </template>
-        <template v-slot:item.actions="{ item }">
-            <v-btn variant="tonal" color="primary" icon="mdi-plus" size="x-small" density="comfortable" @click="functionEdit(item.raw)"></v-btn>
-        </template>
-        </v-data-table>
-    </v-card>
+    <v-data-table
+    v-model:items-per-page="itemsPerPage"
+    :headers="headers"
+    :items="datafields"
+    item-value="ID"
+    class="elevation-1"
+    >
+    <template v-slot:item.haveKids="{ item }">
+        <v-icon v-if="item.raw.haveKids == 'TRUE'" color="green-darken-2" icon="mdi-check"></v-icon>
+        <v-icon v-else color="red-darken-2" icon="mdi-close"></v-icon>
+    </template>
+    <template v-slot:item.joviality="{ item }">
+        <v-icon v-if="item.raw.joviality > 0.75" color="green-darken-2" icon="mdi-emoticon"></v-icon>
+        <v-icon v-else-if="item.raw.joviality > 0.5" color="yellow-darken-2" icon="mdi-emoticon-neutral"></v-icon>
+        <v-icon v-else-if="item.raw.joviality > 0.25" color="orange-darken-2" icon="mdi-emoticon-sad"></v-icon>
+        <v-icon v-else color="red-darken-2" icon="mdi-emoticon-dead"></v-icon>
+    </template>
+    <template v-slot:item.actions="{ item }">
+        <v-btn variant="tonal" color="primary" icon="mdi-plus" size="x-small" density="comfortable" @click="functionEdit(item.raw)"></v-btn>
+    </template>
+    </v-data-table>
 </template>
 <script>
 import * as d3 from 'd3'

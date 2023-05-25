@@ -169,10 +169,3 @@ export default defineComponent ({
         </v-row>
     </div>
 </template>
-
-<style>
-.v-card {
-    padding: 2%;
-    padding-top: 0%;
-}
-</style>

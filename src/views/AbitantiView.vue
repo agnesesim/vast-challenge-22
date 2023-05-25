@@ -95,6 +95,60 @@
       </v-col>
     </v-row>
     <v-row class="my-1">
+        <v-col xs="12" md="6" xl="3">
+            <AgeChart 
+              :education="educationSelected"
+              :group="groupSelected"
+              :figli="figliSelected"
+              :age="ageRange" 
+              :dim="dimRange" 
+              :happy="happySelected" 
+              :neutral="neutralSelected"
+              :sad="sadSelected"
+              :dead="deadSelected"
+            ></AgeChart>
+        </v-col>
+        <v-col xs="12" md="6" xl="3">
+            <EducationChart 
+              :education="educationSelected"
+              :group="groupSelected"
+              :figli="figliSelected"
+              :age="ageRange" 
+              :dim="dimRange" 
+              :happy="happySelected" 
+              :neutral="neutralSelected"
+              :sad="sadSelected"
+              :dead="deadSelected"
+            ></EducationChart>
+        </v-col>
+        <v-col xs="12" md="6" xl="3">
+            <HouseholdChart
+              :education="educationSelected"
+              :group="groupSelected"
+              :figli="figliSelected"
+              :age="ageRange" 
+              :dim="dimRange" 
+              :happy="happySelected" 
+              :neutral="neutralSelected"
+              :sad="sadSelected"
+              :dead="deadSelected"
+            ></HouseholdChart>
+        </v-col>
+        <v-col xs="12" md="6" xl="3">
+            <JovialityChart 
+              :education="educationSelected"
+              :group="groupSelected"
+              :figli="figliSelected"
+              :age="ageRange" 
+              :dim="dimRange" 
+              :happy="happySelected" 
+              :neutral="neutralSelected"
+              :sad="sadSelected"
+              :dead="deadSelected"
+            ></JovialityChart>
+        </v-col>
+    </v-row>
+    <v-row class="my-1">
       <v-col>
         <ParticipantTable 
           :education="educationSelected"
@@ -110,25 +164,32 @@
         ></ParticipantTable>
       </v-col>
     </v-row>
-    <v-row class="my-1">
+    <!-- <v-row class="my-1">
       <v-col>
         <ParticipantCard :participant="participantSelected"></ParticipantCard>
       </v-col>
-    </v-row>
+    </v-row> -->
   </div>
 </template>
 
 <script>
-import { groups } from 'd3-array'
-import ParticipantCard from '../components/ParticipantCard.vue'
-import ParticipantTable from '../components/ParticipantTable.vue'
+import ParticipantCard from '../components/abitanti/ParticipantCard.vue'
+import ParticipantTable from '../components/abitanti/ParticipantTable.vue'
+import AgeChart from '../components/abitanti/AgeChart.vue'
+import EducationChart from '../components/abitanti/EducationChart.vue'
+import HouseholdChart from '../components/abitanti/HouseholdChart.vue'
+import JovialityChart from '../components/abitanti/JovialityChart.vue'
 
   export default {
     name: 'AbitantiView',
     components:{
-      ParticipantCard,
-      ParticipantTable
-    },
+    ParticipantCard,
+    ParticipantTable,
+    AgeChart,
+    EducationChart,
+    HouseholdChart,
+    JovialityChart
+},
     data () {
       return {
         educationSelected: null,
