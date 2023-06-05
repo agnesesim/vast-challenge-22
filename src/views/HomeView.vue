@@ -41,7 +41,7 @@ export default {
         },
         {
           title: 'Negozi',
-          link: `AbitantiView`,
+          link: `edifici`,
           img: 'src\\assets\\icons\\store.png',
         },
         {

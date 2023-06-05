@@ -23,6 +23,11 @@ const router = createRouter({
       component: () => import('../views/DemografiaView.vue')
     },
     {
+      path: '/edifici',
+      name: 'edifici',
+      component: () => import('../views/EdificiView.vue')
+    },
+    {
       path: '/relazioni',
       name: 'relazioni',
       component: () => import('../views/RelazioniView.vue')
