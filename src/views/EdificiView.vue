@@ -138,10 +138,14 @@
             return {
                 building: [],
                 typeSelected: 'residental',
+                // residential stuff
                 residental_all: [],
                 residental_filtered: [],
                 selectedFeatureRes: null,
                 selectedIndexRes: -1,
+                // commercial stuff
+                commercial_all: [],
+                commercial_filtered: [],
             }
         },
         async mounted () {

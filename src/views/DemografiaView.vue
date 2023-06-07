@@ -1,171 +1,296 @@
-<script>
-import * as d3 from 'd3'
-import { defineComponent } from 'vue';
+<template>
+    <div class="addressbook">
+      <v-row class="my-1">
+        <v-col>
+          <v-card>
+            <v-row class="ma-2 py-0">
+              <v-col
+                cols="12"
+                sm="6"
+                md="4"
+                order="1"
+              >
+                <v-select
+                  clearable
+                  label="Education"
+                  v-model="educationSelected"
+                  :items="['Low', 'HighSchoolOrCollege', 'Graduate', 'Bachelors']"
+                ></v-select>
+              </v-col>
+              <v-col
+                cols="12"
+                sm="6"
+                md="4"
+                order="2"
+              >
+                <v-select
+                  clearable
+                  label="Gruppo"
+                  v-model="groupSelected"
+                  :items="['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']"
+                ></v-select>
+              </v-col>
+              <v-col
+                cols="12"
+                sm="6"
+                md="4"
+                order="4"
+                order-md="3"
+              >
+                <v-label text="Figli"></v-label>
+                <v-radio-group inline v-model="figliSelected">
+                  <v-radio label="Si" value="si"></v-radio>
+                  <v-radio label="No" value="no"></v-radio>
+                  <v-radio label="Indifferente" value="ind"></v-radio>
+                </v-radio-group>
+              </v-col>
+              <v-col
+                cols="12"
+                sm="6"
+                md="4"
+                order="5"
+                order-md="4"
+              >
+                <v-label text="Dimensioni della famiglia"></v-label>
+                <v-range-slider
+                  v-model="dimRange"
+                  step="1"
+                  max="3"
+                  min="1"
+                  thumb-label
+                ></v-range-slider>
+              </v-col>
+              <v-col
+                cols="12"
+                sm="6"
+                md="4"
+                order="3"
+                order-md="5"
+              >
+                <v-label text="Età"></v-label>
+                <v-range-slider
+                  v-model="ageRange"
+                  step="1"
+                  max="60"
+                  min="18"
+                  thumb-label
+                ></v-range-slider>
+              </v-col>
+              <v-col
+                cols="12"
+                sm="6"
+                md="4"
+                order="6"
+              >
+                <v-label text="Giovialità"></v-label><br> 
+                <div class="d-flex justify-space-around">
+                  <v-icon :color="happyColor" icon="mdi-emoticon" @click="changeJoviality('happy')"></v-icon>
+                  <v-icon :color="neutralColor" icon="mdi-emoticon-neutral" @click="changeJoviality('neutral')"></v-icon>
+                  <v-icon :color="sadColor" icon="mdi-emoticon-sad" @click="changeJoviality('sad')"></v-icon>
+                  <v-icon :color="deadColor" icon="mdi-emoticon-dead" @click="changeJoviality('dead')"></v-icon>
+                </div>
+              </v-col>
+            </v-row>
+          </v-card>
+        </v-col>
+      </v-row>
+      <v-row class="my-1">
+          <v-col xs="12" md="6" xl="3">
+              <AgeChart
+                v-if="loaded"
+                :datafields="filterDataset"
+              ></AgeChart>
+          </v-col>
+          <v-col xs="12" md="6" xl="3">
+              <EducationChart
+                v-if="loaded"
+                :datafields="filterDataset"
+              ></EducationChart>
+          </v-col>
+          <v-col xs="12" md="6" xl="3">
+              <HouseholdChart
+                v-if="loaded"
+                :datafields="filterDataset"
+              ></HouseholdChart>
+          </v-col>
+          <v-col xs="12" md="6" xl="3">
+              <JovialityChart
+                v-if="loaded"
+                :datafields="filterDataset"
+              ></JovialityChart>
+          </v-col>
+      </v-row>
+      <v-row>
+        <v-col lg="7">
+          <v-card class="d-flex justify-center pa-3">
+            <CityMapPeople :data="dataForMap" :data-type="'linear'"></CityMapPeople>
+          </v-card>
+        </v-col>
+      </v-row>
+      <!-- <v-row class="my-1">
+        <v-col>
+          <ParticipantTable 
+            :education="educationSelected"
+            :group="groupSelected"
+            :figli="figliSelected"
+            :age="ageRange" 
+            :dim="dimRange" 
+            :happy="happySelected" 
+            :neutral="neutralSelected"
+            :sad="sadSelected"
+            :dead="deadSelected"
+            :functionEdit="editItem"
+          ></ParticipantTable>
+        </v-col>
+      </v-row> -->
+      <!-- <v-row class="my-1">
+        <v-col>
+          <ParticipantCard :participant="participantSelected"></ParticipantCard>
+        </v-col>
+      </v-row> -->
+    </div>
+  </template>
+  
+  <script>
+  import * as d3 from 'd3'
 
-import {
-  Chart as ChartJS,
-  Title,
-  Tooltip,
-  Legend,
-  BarElement,
-  CategoryScale,
-  LinearScale,
-  ArcElement,
-  PointElement,
-  LineElement,
-} from 'chart.js'
-import { Bar } from 'vue-chartjs'
-import { Doughnut } from 'vue-chartjs'
-import { Line } from 'vue-chartjs'
+  // import ParticipantCard from '../components/abitanti/ParticipantCard.vue'
+  // import ParticipantTable from '../components/abitanti/ParticipantTable.vue'
+  import AgeChart from '../components/abitanti/AgeChart.vue'
+  import EducationChart from '../components/abitanti/EducationChart.vue'
+  import HouseholdChart from '../components/abitanti/HouseholdChart.vue'
+  import JovialityChart from '../components/abitanti/JovialityChart.vue'
+  import CityMapPeople from '../components/abitanti/CityMapPeople.vue'
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, PointElement, LineElement, Title, Tooltip, Legend)
-
-
-export default defineComponent ({
-    name: 'DemografiaView',
-    components:{
-        Bar,
-        Doughnut,
-        Line
-        
-    },
-    data(){
+  
+    export default {
+      name: 'AbitantiView',
+      components:{
+        // ParticipantCard,
+        // ParticipantTable,
+        AgeChart,
+        EducationChart,
+        HouseholdChart,
+        JovialityChart,
+        CityMapPeople
+      },
+      data () {
         return {
-            datafields: [],
-            options: {
-                responsive: true,
-                maintainAspectRatio: false
-            },
-            dataAge:[],
-            dataEducation: [],
-            dataHousehold: [],
-            dataJoviality: [],
+          educationSelected: null,
+          groupSelected: null,
+          figliSelected: 'ind',
+          ageRange: [18,60],
+          dimRange: [1,3],
+          happySelected: true,
+          happyColor: 'green-darken-2',
+          neutralSelected: true,
+          neutralColor: 'yellow-darken-2',
+          sadSelected: true,
+          sadColor: 'orange-darken-2',
+          deadSelected: true,
+          deadColor: 'red-darken-2',
+          participantSelected: {},
 
-            loaded: false
+          participants: [],
+          apartments: [],
+          loaded: false,
         }
-    },
-    async mounted () {
+      },
+      async mounted () {
         d3.csv('datasets/tables/Participants.csv')
-        .then((rows) => {
-            this.datafields = rows
+        .then((participants) => {
+          this.participants = participants
+            
+          d3.csv('datasets/joins/homes.csv')
+          .then((homes) => {
 
-            this.dataAge = this.buildAgeDataset()
-            this.dataEducation = this.buildEducationDataset()
-            this.dataHousehold = this.buildHouseholdDataset()
-            this.dataJoviality = this.buildJovialityDataset()
+            d3.csv('datasets/tables/Apartments.csv')
+            .then((apart) => {
+                
+              this.apartments = apart.map( r => {
+                    var abitanti = homes.filter(h => +h['aptId'] == +r['apartmentId'])
+                      return {
+                        id: +r['apartmentId'],
+                        rent: +r['rentalCost'],
+                        occupancy: +r['maxOccupancy '],
+                        rooms: +r['numberOfRooms'],
+                        buildingId: +r['buildingId'],
+                        participants: abitanti.map(a => +a['participantId']),
+                        x: +this.getPointX(r['location']),
+                        y: +this.getPointY(r['location'])
+                    }
+                })
+
+              this.participants.forEach(p => {
+                var casa = this.apartments.filter(a => a['participants'].includes(+p['participantId']))
+                p['apartments'] = casa.map(c => c['id'])
+                p['apartmentsXY'] = casa.map(c => [c['x'], c['y']])
+              })
+    
+            });
+          });
 
             this.loaded = true
-        });
-    },
-    methods: {
-        buildAgeDataset() {
-            var data = []
-
-            data.push(this.datafields.filter( d => d['age'] > 18 && d['age'] <= 24).length)
-            data.push(this.datafields.filter( d => d['age'] > 24 && d['age'] <= 32).length)
-            data.push(this.datafields.filter( d => d['age'] > 32 && d['age'] <= 40).length)
-            data.push(this.datafields.filter( d => d['age'] > 40 && d['age'] <= 49).length)
-            data.push(this.datafields.filter( d => d['age'] > 49).length)
-
-            return {
-                labels: ['18-24', '24-32', '33-40', '41-49', '50+'],
-                datasets: [
-                    {
-                        label: '# Abitanti',
-                        data: data,
-                        backgroundColor: ['#77CEFF', '#0079AF', '#123E6B', '#97B0C4', '#A5C8ED'],
-                    },
-                ],
-            };
+        }); 
+      },
+      computed: {
+        filterDataset() {
+              return this.participants
+                  .filter(d=> this.educationSelected == null ? d : d.educationLevel == this.educationSelected )
+                  .filter(d=> this.groupSelected == null ? d : d.interestGroup == this.groupSelected )
+                  .filter(d=> this.figliSelected == 'ind' ? d : this.figliSelected == 'si' ? d.haveKids == 'TRUE' : d.haveKids == 'FALSE' )
+                  .filter(d=> d.age >= this.ageRange[0] && d.age <= this.ageRange[1])
+                  .filter(d=> d.householdSize >= this.dimRange[0] && d.householdSize <= this.dimRange[1])
+                  .filter(d=> this.happySelected? d : d.joviality < 0.75)
+                  .filter(d=> this.neutralSelected? d : d.joviality >= 0.75 || d.joviality < 0.50)
+                  .filter(d=> this.sadSelected? d : d.joviality >= 0.50 || d.joviality < 0.25)
+                  .filter(d=> this.deadSelected? d : d.joviality >= 0.25 )
         },
-        buildEducationDataset(){
-            var data = []
-            var labels = [... new Set(this.datafields.map(d => d['educationLevel']))] 
-
-            labels.forEach(e => {
-                data.push(this.datafields.filter(d=> d['educationLevel'] == e).length)
-            })
-
+        dataForMap(){
+          return this.filterDataset.map(p => {
             return {
-                labels: labels,
-                datasets: [
-                    {
-                        data: data,
-                        backgroundColor: ['#77CEFF', '#0079AF', '#123E6B', '#97B0C4'],
-                    },
-                ]
-            };
-        },
-        buildHouseholdDataset(){
-            var data = []
-            var labels = [1, 2, 3] 
-
-            labels.forEach(e => {
-                data.push(this.datafields.filter(d=> d['householdSize'] == e).length)
-            })
-
-            return {
-                labels: labels,
-                datasets: [
-                    {
-                        label: '# Abitanti',
-                        data: data,
-                        backgroundColor: ['#77CEFF', '#0079AF', '#123E6B', '#97B0C4'],
-                    },
-                ]
-            };
-        },
-        buildJovialityDataset(){
-            var data = []
-            var labels = ['low', 'medium', 'high', 'top'] 
-            
-            data.push(this.datafields.filter( d => d['joviality'] <= 0.25).length)
-            data.push(this.datafields.filter( d => d['joviality'] > 0.25 && d['joviality'] <= 0.50).length)
-            data.push(this.datafields.filter( d => d['joviality'] > 0.50 && d['joviality'] <= 0.75).length)
-            data.push(this.datafields.filter( d => d['joviality'] > 0.75 ).length)
-
-
-            return {
-                labels: labels,
-                datasets: [
-                    {
-                        label: '# Abitanti',
-                        data: data,
-                        backgroundColor: '#77CEFF',
-                    },
-                ]
-            };
+              value: p['age'],
+              x: p['apartmentsXY'].length > 0 ? p['apartmentsXY'][0][0] : 0,
+              y: p['apartmentsXY'].length > 0 ? p['apartmentsXY'][0][1] : 0
+            }
+          })
         }
+      },
+      methods: {
+        changeJoviality(status){
+          switch(status){
+            case "happy":
+              this.happySelected = !this.happySelected
+              this.happyColor = this.happySelected ? 'green-darken-2' : 'grey-darken-2'
+              break;
+            case "neutral":
+              this.neutralSelected = !this.neutralSelected
+              this.neutralColor = this.neutralSelected ? 'yellow-darken-2' : 'grey-darken-2'
+              break;
+            case "sad":
+              this.sadSelected = !this.sadSelected
+              this.sadColor = this.sadSelected ? 'orange-darken-2' : 'grey-darken-2'
+              break;
+            case "dead":
+              this.deadSelected = !this.deadSelected
+              this.deadColor = this.deadSelected ? 'red-darken-2' : 'grey-darken-2'
+              break;
+          }
+        },
+        editItem (item) {
+            this.participantSelected = item
+        },
+        getPointX(value){
+            var x = value.substring(('POINT ('.length), value.length)
+            x = x.substring(0, x.indexOf(' '))
+            return x
+        },
+        getPointY(value){
+            var y = value.substring(('POINT ('.length), value.length)
+            y = y.substring(y.indexOf(' '), y.length-1)
+            return y
+        }
+      },
     }
-})
-</script>
-
-<template>
-    <div class="demographics">
-        <v-row class="my-1">
-            <v-col>
-                <v-card title="Age">
-                    <Bar v-if="loaded" :data="dataAge" :options="options"  style="max-height: 350px;" />
-                </v-card>
-            </v-col>
-            <v-col>
-                <v-card title="Education">
-                    <Doughnut v-if="loaded" :data="dataEducation" :options="options"  style="max-height: 350px;" />
-                </v-card> 
-            </v-col>
-        </v-row>
-        
-        <v-row class="my-1">
-            <v-col>
-                <v-card title="Household size">
-                    <Bar v-if="loaded" :data="dataHousehold" :options="options"  style="max-height: 350px;" />
-                </v-card>
-            </v-col>
-            <v-col>
-                <v-card title="Joviality">
-                    <Line v-if="loaded" :data="dataJoviality" :options="options"  style="max-height: 350px;" />
-                </v-card> 
-            </v-col>
-        </v-row>
-    </div>
-</template>
+  </script>
+  
