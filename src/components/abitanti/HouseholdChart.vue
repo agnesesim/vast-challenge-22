@@ -1,6 +1,6 @@
 <template>
-    <v-card title="Household size">
-        <Bar :data="dataChart" :options="options" style="max-height: 350px;" />
+    <v-card title="Household size" class="pa-2">
+        <Bar :data="dataChart" :options="options" style="max-height: 300px;" />
     </v-card>
 </template>
 
@@ -41,7 +41,27 @@ export default defineComponent ({
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        border: {
+                            display: false
+                        },
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        border: {
+                            display: false
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
             },
 
             loaded: false

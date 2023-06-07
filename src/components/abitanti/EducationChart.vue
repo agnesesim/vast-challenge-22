@@ -1,6 +1,6 @@
 <template>
-    <v-card title="Education">
-        <Doughnut :data="dataChart" :options="options"  style="max-height: 350px;" />
+    <v-card title="Education" class="pa-2">
+        <Doughnut :data="dataChart" :options="options"  style="max-height: 300px;" />
     </v-card> 
 </template>
 

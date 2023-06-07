@@ -9,6 +9,7 @@
                 sm="6"
                 md="4"
                 order="1"
+                class="py-0"
               >
                 <v-select
                   clearable
@@ -22,6 +23,7 @@
                 sm="6"
                 md="4"
                 order="2"
+                class="py-0"
               >
                 <v-select
                   clearable
@@ -36,6 +38,7 @@
                 md="4"
                 order="4"
                 order-md="3"
+                class="py-0"
               >
                 <v-label text="Figli"></v-label>
                 <v-radio-group inline v-model="figliSelected">
@@ -50,6 +53,7 @@
                 md="4"
                 order="5"
                 order-md="4"
+                class="py-0"
               >
                 <v-label text="Dimensioni della famiglia"></v-label>
                 <v-range-slider
@@ -66,6 +70,7 @@
                 md="4"
                 order="3"
                 order-md="5"
+                class="py-0"
               >
                 <v-label text="Età"></v-label>
                 <v-range-slider
@@ -81,6 +86,7 @@
                 sm="6"
                 md="4"
                 order="6"
+                class="py-0"
               >
                 <v-label text="Giovialità"></v-label><br> 
                 <div class="d-flex justify-space-around">
@@ -94,26 +100,26 @@
           </v-card>
         </v-col>
       </v-row>
-      <v-row class="my-1">
-          <v-col xs="12" md="6" xl="3">
+      <v-row class="mt-1">
+          <v-col xs="12" md="3" xl="3">
               <AgeChart
                 v-if="loaded"
                 :datafields="filterDataset"
               ></AgeChart>
           </v-col>
-          <v-col xs="12" md="6" xl="3">
+          <v-col xs="12" md="3" xl="3">
               <EducationChart
                 v-if="loaded"
                 :datafields="filterDataset"
               ></EducationChart>
           </v-col>
-          <v-col xs="12" md="6" xl="3">
+          <v-col xs="12" md="3" xl="3">
               <HouseholdChart
                 v-if="loaded"
                 :datafields="filterDataset"
               ></HouseholdChart>
           </v-col>
-          <v-col xs="12" md="6" xl="3">
+          <v-col xs="12" md="3" xl="3">
               <JovialityChart
                 v-if="loaded"
                 :datafields="filterDataset"

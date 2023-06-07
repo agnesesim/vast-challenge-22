@@ -1,6 +1,6 @@
 <template>
-    <v-card title="Joviality">
-        <Line :data="dataChart" :options="options"  style="max-height: 350px;" />
+    <v-card title="Joviality" class="pa-2">
+        <Line :data="dataChart" :options="options"  style="max-height: 300px;" />
     </v-card> 
 </template>
 
@@ -42,7 +42,27 @@ export default defineComponent ({
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        border: {
+                            display: false
+                        },
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        border: {
+                            display: false
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
             },
 
             loaded: false
