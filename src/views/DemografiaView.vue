@@ -15,7 +15,8 @@
                   clearable
                   label="Education"
                   v-model="educationSelected"
-                  :items="['Low', 'HighSchoolOrCollege', 'Graduate', 'Bachelors']"
+                  :items="['Low', 'HighSchoolOrCollege', 'Bachelors', 'Graduate']"
+                  variant="underlined"
                 ></v-select>
               </v-col>
               <v-col
@@ -30,6 +31,7 @@
                   label="Gruppo"
                   v-model="groupSelected"
                   :items="['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']"
+                  variant="underlined"
                 ></v-select>
               </v-col>
               <v-col
@@ -127,9 +129,39 @@
           </v-col>
       </v-row>
       <v-row>
-        <v-col lg="7">
+        <v-col lg="8">
           <v-card class="d-flex justify-center pa-3">
-            <CityMapPeople :data="dataForMap" :data-type="'linear'"></CityMapPeople>
+                <CityMapPeople v-if="loaded" :data="dataForMap" :data-type="'linear'"></CityMapPeople>
+          </v-card>
+        </v-col>
+        <v-col lg="4">
+          <v-card class="h-100">
+          <v-card-text>
+            <v-row class="ma-2 py-0">
+              <v-col
+                cols="12"
+                class="py-0"
+              >
+                <v-select
+                  label="Where they "
+                  v-model="homeJobSelected"
+                  :items="[{title: 'Live', value: 'home'}, {title: 'Work', value: 'job'}]"
+                  variant="underlined"
+                ></v-select>
+              </v-col>
+              <v-col
+                cols="12"
+                class="py-0"
+              >
+                <v-radio-group column v-model="featureSelected">
+                  <v-radio label="Age" value="age"></v-radio>
+                  <v-radio label="Education" value="education"></v-radio>
+                  <v-radio label="Householde size" value="household"></v-radio>
+                  <v-radio label="Joviality" value="joviality"></v-radio>
+                </v-radio-group>
+              </v-col>
+            </v-row>
+          </v-card-text>
           </v-card>
         </v-col>
       </v-row>
@@ -199,6 +231,9 @@
 
           participants: [],
           apartments: [],
+          homeJobSelected: 'home',
+          featureSelected: 'age',
+
           loaded: false,
         }
       },
@@ -254,11 +289,44 @@
         },
         dataForMap(){
           return this.filterDataset.map(p => {
-            return {
-              value: p['age'],
-              x: p['apartmentsXY'].length > 0 ? p['apartmentsXY'][0][0] : 0,
-              y: p['apartmentsXY'].length > 0 ? p['apartmentsXY'][0][1] : 0
+            switch(this.featureSelected){
+              case 'age':
+                return {
+                  value: p['age'],
+                  color: this.colorByAge(p['age']),
+                  x: p['apartmentsXY'].length > 0 ? p['apartmentsXY'][0][0] : 0,
+                  y: p['apartmentsXY'].length > 0 ? p['apartmentsXY'][0][1] : 0
+                }
+              case 'education':
+                return {
+                  value: p['educationLevel'],
+                  color: this.colorByEdu(p['educationLevel']),
+                  x: p['apartmentsXY'].length > 0 ? p['apartmentsXY'][0][0] : 0,
+                  y: p['apartmentsXY'].length > 0 ? p['apartmentsXY'][0][1] : 0
+                }
+              case 'household':
+                return {
+                  value: p['householdSize'],
+                  color: this.colorBySize(p['householdSize']),
+                  x: p['apartmentsXY'].length > 0 ? p['apartmentsXY'][0][0] : 0,
+                  y: p['apartmentsXY'].length > 0 ? p['apartmentsXY'][0][1] : 0
+                }
+              case 'joviality':
+                return {
+                  value: p['joviality'],
+                  color: this.colorByJoviality(p['joviality']),
+                  x: p['apartmentsXY'].length > 0 ? p['apartmentsXY'][0][0] : 0,
+                  y: p['apartmentsXY'].length > 0 ? p['apartmentsXY'][0][1] : 0
+                }
+               default:  
+                return {
+                  value: 1,
+                  color: 'black',
+                  x: p['apartmentsXY'].length > 0 ? p['apartmentsXY'][0][0] : 0,
+                  y: p['apartmentsXY'].length > 0 ? p['apartmentsXY'][0][1] : 0
+                }
             }
+           
           })
         }
       },
@@ -295,6 +363,44 @@
             var y = value.substring(('POINT ('.length), value.length)
             y = y.substring(y.indexOf(' '), y.length-1)
             return y
+        },
+        colorByAge(value){
+          if (value < 25)
+            return '#C0E5FE'
+          else if (value < 33)
+            return '#60B2FE'
+          else if (value < 41)
+            return '#007FFE'
+          else if (value < 50)
+            return '#3373C4'
+          else return '#003396'
+        },
+        colorByEdu(value){
+          if (value == 'Low')
+            return '#A7DDBC'
+          else if (value == 'HighSchoolOrCollege')
+            return '#78AE99'
+          else if (value == 'Bachelors')
+            return '#497F76'
+          else if (value == 'Graduate')
+            return '#316764'
+        },
+        colorBySize(value){
+          if (value == 1)
+            return '#FDF1AD'
+          else if (value == 2)
+            return '#FEC98F'
+          else if (value == 3)
+            return '#FFA071'
+        },
+        colorByJoviality(value){
+          if (value <= 0.25)
+            return '#D32F2F'
+          else if (value <= 0.50)
+            return '#F57C00'
+          else if (value <= 0.75)
+            return '#FBC02D'
+          else return '#388E3C'
         }
       },
     }

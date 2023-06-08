@@ -6,7 +6,6 @@
 
 
 <script>
-import * as d3 from 'd3'
 import { defineComponent } from 'vue';
 
 import {
@@ -35,7 +34,7 @@ export default defineComponent ({
                     {
                         label: '# Abitanti',
                         data: [0],
-                        backgroundColor: ['#77CEFF', '#0079AF', '#123E6B', '#97B0C4'],
+                        backgroundColor: ['#FDF1AD', '#FEC98F', '#FFA071'],
                     },
                 ]
             },
@@ -91,7 +90,7 @@ export default defineComponent ({
                     {
                         label: '# Abitanti',
                         data: data,
-                        backgroundColor: ['#77CEFF', '#0079AF', '#123E6B', '#97B0C4'],
+                        backgroundColor: ['#FDF1AD', '#FEC98F', '#FFA071'],
                     },
                 ]
             };

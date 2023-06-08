@@ -33,7 +33,7 @@ export default defineComponent ({
                 datasets: [
                     {
                         data: [ 0 ],
-                        backgroundColor: ['#77CEFF'],
+                        backgroundColor: ['#78AE99'],
                     },
                 ]
             },
@@ -68,7 +68,7 @@ export default defineComponent ({
                 datasets: [
                     {
                         data: data,
-                        backgroundColor: ['#77CEFF', '#0079AF', '#123E6B', '#97B0C4'],
+                        backgroundColor: ['#78AE99', '#497F76', '#316764','#A7DDBC'],
                     },
                 ]
             };

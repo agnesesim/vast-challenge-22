@@ -29,7 +29,7 @@ export default defineComponent ({
     data(){
         return {
             dataChart:{
-                labels: ['18-24', '24-32', '33-40', '41-49', '50+'],
+                labels: ['18-24', '25-32', '33-40', '41-49', '50+'],
                 datasets: [
                     {
                         label: '# Abitanti',
@@ -89,7 +89,7 @@ export default defineComponent ({
                     {
                         label: '# Abitanti',
                         data: data,
-                        backgroundColor: ['#77CEFF', '#0079AF', '#123E6B', '#97B0C4', '#A5C8ED'],
+                        backgroundColor: ['#C0E5FE', '#60B2FE', '#007FFE', '#3373C4', '#003396'],
                     },
                 ],
             };

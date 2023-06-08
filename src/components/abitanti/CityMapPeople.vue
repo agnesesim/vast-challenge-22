@@ -72,8 +72,7 @@
 
         const gfeature = d3.select('#feature')
 
-        var myColor = getScaleColor('linear', data)
-
+        //var myColor = getScaleColor('linear', data)
         gfeature
             .selectAll("circle")
             .data(data)
@@ -82,10 +81,10 @@
             .attr("cx", d => {  return projection([d.x, d.y])[0] } )
             .attr("cy", d =>  { return projection([d.x, d.y])[1] } )
             .attr("r",  4)
-            .style("fill",  function(d){ return myColor(d.value)})
-            .style("stroke", function(d){return myColor(d.value) })
+            .style("fill", d => d.color)
+            .style("stroke", d => d.color)
             .attr("fill-opacity", 0.5)
-            .attr("stroke", function(d){return myColor(d.value) })
+            .attr("stroke", d => d.color)
             .attr("stroke-width", 0.5);
     }
 
