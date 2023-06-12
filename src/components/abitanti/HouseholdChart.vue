@@ -41,6 +41,7 @@ export default defineComponent ({
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                animation: false,
                 scales: {
                     x: {
                         border: {

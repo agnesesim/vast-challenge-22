@@ -41,6 +41,7 @@ export default defineComponent ({
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                animation: false,
                 scales: {
                     x: {
                         border: {
@@ -77,7 +78,7 @@ export default defineComponent ({
         buildDataset() {
             var data = []
 
-            data.push(this.datafields.filter( d => d['age'] > 18 && d['age'] <= 24).length)
+            data.push(this.datafields.filter( d => d['age'] > 17 && d['age'] <= 24).length)
             data.push(this.datafields.filter( d => d['age'] > 24 && d['age'] <= 32).length)
             data.push(this.datafields.filter( d => d['age'] > 32 && d['age'] <= 40).length)
             data.push(this.datafields.filter( d => d['age'] > 40 && d['age'] <= 49).length)

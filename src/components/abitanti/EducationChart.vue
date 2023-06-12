@@ -39,7 +39,8 @@ export default defineComponent ({
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false
+                maintainAspectRatio: false,
+                animation: false,
             },
 
             loaded: false
