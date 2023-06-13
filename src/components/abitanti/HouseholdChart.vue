@@ -1,7 +1,5 @@
 <template>
-    <v-card title="Household size" class="pa-2">
-        <Bar :data="dataChart" :options="options" style="max-height: 300px;" />
-    </v-card>
+    <Bar :data="dataChart" :options="options" style="max-height: 300px;" />
 </template>
 
 

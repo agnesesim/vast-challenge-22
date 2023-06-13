@@ -1,7 +1,5 @@
 <template>
-    <v-card title="Joviality" class="pa-2">
-        <Line :data="dataChart" :options="options"  style="max-height: 300px;" />
-    </v-card> 
+    <Line :data="dataChart" :options="options"  style="max-height: 300px;" />
 </template>
 
 

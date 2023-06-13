@@ -102,37 +102,49 @@
             </v-col>
         </v-row>
         <v-row class="mt-1">
-            <v-col xs="12" md="3" xl="3">
-                <AgeChart
-                v-if="loaded"
-                :datafields="filterDataset"
-                ></AgeChart>
-                <div v-else class="d-flex justify-content-center"><v-progress-circular color="primary" indeterminate></v-progress-circular></div>
+            <v-col sm="6" md="3">
+                <v-card title="Age" class="pa-2" style="min-height: 350px;">
+                    <AgeChart
+                        v-if="loaded"
+                        :datafields="filterDataset"
+                    ></AgeChart>
+                    <div v-else class="d-flex justify-content-center">
+                        <v-skeleton-loader :loading="true" height="300" ></v-skeleton-loader>
+                    </div>
+                </v-card>
             </v-col>
-            <v-col xs="12" md="3" xl="3">
-                <EducationChart
-                v-if="loaded"
-                :datafields="filterDataset"
-                ></EducationChart>
-                <div v-else class="d-flex justify-content-center"><v-progress-circular color="primary" indeterminate></v-progress-circular></div>
+            <v-col sm="6" md="3">
+                <v-card title="Education" class="pa-2" style="min-height: 350px;">
+                    <EducationChart
+                        v-if="loaded"
+                        :datafields="filterDataset"
+                    ></EducationChart>
+                    <div v-else class="d-flex justify-content-center">
+                        <v-skeleton-loader></v-skeleton-loader>
+                    </div>
+                </v-card>
             </v-col>
-            <v-col xs="12" md="3" xl="3">
-                <HouseholdChart
-                v-if="loaded"
-                :datafields="filterDataset"
-                ></HouseholdChart>
-                <div v-else class="d-flex justify-content-center"><v-progress-circular color="primary" indeterminate></v-progress-circular></div>
+            <v-col sm="6" md="3">
+                <v-card title="Household size" class="pa-2" style="min-height: 350px;">
+                    <HouseholdChart
+                        v-if="loaded"
+                        :datafields="filterDataset"
+                    ></HouseholdChart>
+                    <div v-else class="d-flex justify-content-center"><v-progress-circular color="primary" indeterminate></v-progress-circular></div>
+                </v-card>
             </v-col>
-            <v-col xs="12" md="3" xl="3">
-                <JovialityChart
-                    v-if="loaded"
-                    :datafields="filterDataset"
-                ></JovialityChart>
-                <div v-else class="d-flex justify-content-center"><v-progress-circular color="primary" indeterminate></v-progress-circular></div>
+            <v-col sm="6" md="3">
+                <v-card title="Joviality" class="pa-2" style="min-height: 350px;">
+                    <JovialityChart
+                        v-if="loaded"
+                        :datafields="filterDataset"
+                    ></JovialityChart>
+                    <div v-else class="d-flex justify-content-center"><v-progress-circular color="primary" indeterminate></v-progress-circular></div>
+                </v-card>
             </v-col>
         </v-row>
         <v-row class="mt-1">
-            <v-col xs="12" md="3" xl="3">
+            <v-col sm="6" md="3">
                 <div v-if="loaded">
                     <NumberCard 
                         :title="'Average rent'"
@@ -140,7 +152,7 @@
                     ></NumberCard>
                 </div>
             </v-col>
-            <v-col xs="12" md="3" xl="3">
+            <v-col sm="6" md="3">
                 <div v-if="loaded">
                     <NumberCard 
                         :title="'Average owned houses'"
@@ -148,7 +160,7 @@
                     ></NumberCard>
                 </div>
             </v-col>
-            <v-col xs="12" md="3" xl="3">
+            <v-col sm="6" md="3">
                 <div v-if="loaded">
                     <NumberCard 
                         :title="'Average hourly rate'"
@@ -156,7 +168,7 @@
                     ></NumberCard>
                 </div>
             </v-col>
-            <v-col xs="12" md="3" xl="3">
+            <v-col sm="6" md="3">
                 <div v-if="loaded">
                     <NumberCard 
                         :title="'Average jobs'"
@@ -166,14 +178,14 @@
             </v-col>
         </v-row>
         <v-row>
-            <v-col lg="8">
+            <v-col sm="12" order="2" md="8" order-md="1">
                 <v-card class="d-flex justify-center pa-3">
                     <div v-if="loaded">   
                         <CityMapPeople :data="dataForMap" :data-type="'linear'"></CityMapPeople>
                     </div>
                 </v-card>
             </v-col>
-            <v-col lg="4">
+            <v-col sm="12" order="1" md="4" order-md="2">
                 <v-card class="h-100">
                     <v-card-text>
                         <v-row class="ma-2 py-0">
@@ -253,7 +265,7 @@
                 apartments: [],
                 jobs: [],
                 homeJobSelected: 'home',
-                featureSelected: 'age',
+                featureSelected: '',
 
                 loadedApartments: false,
                 loadedJobs: false,
