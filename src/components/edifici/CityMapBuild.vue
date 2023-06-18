@@ -8,7 +8,8 @@
 <script>
     import * as d3 from 'd3'
 
-    function getMap(buildings, { width = 750, height = 600, scale = 500000} = {}) {
+    
+    function getMap(buildings, type, { width = 800, height = 750, scale = 500000} = {}) {
         const svg = d3.select('#map')
         .attr("width", width)
         .attr("height", height)
@@ -23,7 +24,20 @@
             .data(buildings.features)
             .join("path")
             .attr("d", path)
-            .style("fill", '#bbb');
+            .style("fill", function(d) {
+                if (type){ 
+                    if (d.properties.type == 'residental')
+                        return '#f0ad4e';
+                    else if (d.properties.type == 'commercial')
+                        return '#5bc0de'
+                    else if (d.properties.type == 'school')
+                        return '#5cb85c';
+                }
+                else
+                    return '#bbb';
+            })
+            .attr("fill-opacity", 0.5)
+
 
         svg.append("g").attr("id",'feature')
 
@@ -36,7 +50,8 @@
         };
     }
 
-    function addFeatureDistributionColor(buildings, data, dtype, { width = 750, height = 600, scale = 500000} = {}){
+
+    function addFeatureDistributionColor(buildings, data, {width = 800, height = 750, scale = 500000} = {}){
         
         d3.select('#feature').selectAll("*").remove();
 
@@ -49,7 +64,6 @@
 
         const gfeature = d3.select('#feature')
 
-        //var myColor = getScaleColor('linear', data)
         gfeature
             .selectAll("circle")
             .data(data)
@@ -65,62 +79,36 @@
             .attr("stroke-width", 0.5);
     }
 
-    function getScaleColor(type, data){
-        switch(type){
-            case 'linear':
-                var max = Math.max(...data.map(d =>{return d.value}))
-                var min = Math.min(...data.map(d =>{return d.value}))
-                var median = (max+min)/2
-
-                return d3.scaleLinear()
-                         .domain([min, median, max])
-                         .range(["yellow", "orange", "red"])
-            case 'ordinal': 
-                return d3.scaleOrdinal(d3.schemeTableau10);
-        }
-    }
-
     export default {
-        name: "CityMapPeople",
+        name: "CityMapBuild",
         data: function(){
             return {
                 buildings: {},
-                apartments: {},
-                jobs: {},
                 map: {},
             }
         },      
         props:{
+            colorType: {
+                type: Boolean,
+                default: false
+            },
             data: {
                 type: Array,
                 default: []
-            },
-            dataType: {
-                type: String,
-                default: 'linear'
-            },
+            }
         },
         async mounted(){
 
             this.buildings = await d3.json('datasets/maps/building.json')
-            this.apartments = await d3.json('datasets/maps/appartments.json')
-            this.jobs = await d3.json('datasets/maps/jobs.json')
+            this.map = getMap(this.buildings, this.colorType)
 
-
-            this.map = getMap(this.buildings)
-            //addApartments(this.buildings, this.apartments)
-            //addApartments(this.buildings, this.jobs)
-
-
-        },
-        methods: {
-            addFeature(){
-                addFeatureDistributionColor(this.buildings, this.data, this.dataType);
-            }
         },
         watch:{
-           data: function(){
-                this.addFeature();
+            colorType: function(){
+                this.map = getMap(this.buildings, this.colorType)
+            },
+            data: function(){
+                addFeatureDistributionColor(this.buildings, this.data);
             },
         }
     }
