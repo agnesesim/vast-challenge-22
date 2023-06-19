@@ -99,6 +99,7 @@ export default defineComponent ({
                         }
                     ]
             }
+            console.log(this.data)
         }
     },
     watch:{

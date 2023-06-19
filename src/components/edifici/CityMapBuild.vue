@@ -40,6 +40,7 @@
 
 
         svg.append("g").attr("id",'feature')
+        svg.append("g").attr("id",'locals')
 
         return {
             width,
@@ -79,6 +80,36 @@
             .attr("stroke-width", 0.5);
     }
 
+    function addLocal(buildings, data, {width = 800, height = 750, scale = 500000} = {}){
+        
+        d3.select('#feature').selectAll("*").remove();
+
+        const projection = d3.geoIdentity()
+            .reflectY(true)
+            .fitSize([width, height], buildings)
+
+        const glocals = d3.select('#locals')
+
+        var radius = d3.scaleSqrt([0, 120], [0, width/50 ])
+        var color = //d3.scaleLinear(data.map(d => d.price), d3.schemeBlues[9]).unknown("black")
+                       d3.scaleLinear()
+                         .domain([Math.min(data.map(d => d.price)), Math.max(data.map(d => d.price))])
+                         .range(["light blue",  "blue"])
+        glocals
+            .selectAll("rect")
+            .data(data)
+            .join("rect")
+            .attr("width", d => radius(d.occupancy))
+            .attr("height", d => radius(d.occupancy))
+            .attr("x", d => {  return projection([d.x, d.y])[0] - radius(d.occupancy)/2} )
+            .attr("y", d =>  { return projection([d.x, d.y])[1] - radius(d.occupancy)/2} )
+            .style("fill", d => color(d.price))
+            // .style("stroke", d => color(d.price))
+            .attr("fill-opacity", 0.9)
+            // .attr("stroke", d => color(d.price))
+            // .attr("stroke-width", 0.5);
+        console.log(glocals)
+    }
     export default {
         name: "CityMapBuild",
         data: function(){
@@ -95,6 +126,10 @@
             data: {
                 type: Array,
                 default: []
+            },
+            locals: {
+                type: Array,
+                default: []
             }
         },
         async mounted(){
@@ -109,6 +144,9 @@
             },
             data: function(){
                 addFeatureDistributionColor(this.buildings, this.data);
+            },
+            locals: function(){
+                addLocal(this.buildings, this.locals);
             },
         }
     }

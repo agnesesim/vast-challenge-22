@@ -3,16 +3,26 @@
         <v-row>
             <v-col sm="12" md="8">
                 <v-card class="d-flex justify-center pa-3">
-                        <CityMapBuild :colorType="buildType" :data="arrayDataMap"></CityMapBuild>
+                        <CityMapBuild :colorType="showType" :data="arrayDataMap" :locals="restaurants_all"></CityMapBuild>
                 </v-card>
             </v-col>
             <v-col sm="12" md="4">
                 <v-card class="column-flex justify-center pa-3 h-100">
                     <v-checkbox
-                        v-model="buildType"
+                        v-model="showType"
                         label="Mostra il tipo degli edifici"
                         hide-details
                     ></v-checkbox>
+                    <!-- <v-checkbox
+                        v-model="showRest"
+                        label="Mostra ristoranti"
+                        hide-details
+                    ></v-checkbox>
+                    <v-checkbox
+                        v-model="showPub"
+                        label="Mostra pubs"
+                        hide-details
+                    ></v-checkbox> -->
                     <v-expansion-panels
                         v-model="openAspect"
                         class="pb-3"
@@ -38,9 +48,15 @@
                             title="Restaurants"
                         >
                             <v-expansion-panel-text>
-                                    <v-checkbox label="Checkbox"></v-checkbox>
-                                    <v-checkbox label="Checkbox"></v-checkbox>
-                                    <v-checkbox label="Checkbox"></v-checkbox>
+                                <v-radio-group
+                                    v-model="selectedItemRest"
+                                >
+                                    <v-radio 
+                                        v-for="i in itemsRest"
+                                        :label="i.title" 
+                                        :value="i.value"
+                                    ></v-radio>
+                                </v-radio-group>
                             </v-expansion-panel-text>
                         </v-expansion-panel>
                         <v-expansion-panel
@@ -48,14 +64,20 @@
                             title="Pubs"
                         >
                             <v-expansion-panel-text>
-                                    <v-checkbox label="Checkbox"></v-checkbox>
-                                    <v-checkbox label="Checkbox"></v-checkbox>
-                                    <v-checkbox label="Checkbox"></v-checkbox>
+                                <v-radio-group
+                                    v-model="selectedItemPub"
+                                >
+                                    <v-radio 
+                                        v-for="i in itemsPub"
+                                        :label="i.title" 
+                                        :value="i.value"
+                                    ></v-radio>
+                                </v-radio-group>
                             </v-expansion-panel-text>
                         </v-expansion-panel>
                     </v-expansion-panels>
-                    <DistributionChart v-if="selectedItemHouse!=null" 
-                        :data-subject="selectedItemHouse" 
+                    <DistributionChart v-if="selectedItem!=null" 
+                        :data-subject="selectedItem" 
                         :data-array="houseDistributionData"
                         :data-labels="houseDistributionLabel"
                         :data-colors="houseDistributionColor"
@@ -81,7 +103,9 @@
         data () {
             return {
                 building: [],
-                buildType: false,
+                showType: false,
+                showRest: false,
+                showPub: false,
                 openAspect: null,
                 itemsHouse: [   
                     {value: 'rent', title: 'Rent'}, 
@@ -91,7 +115,21 @@
                 ],
                 selectedItemHouse: null,
                 apartments_all: [],
-                apartments_filter: []
+                apartments_filter: [],
+                itemsRest: [   
+                    {value: 'price', title: 'Prices'}, 
+                    {value: 'occupancy', title: 'Occupancy'}
+                ],
+                selectedItemRest: null,
+                restaurants_all: [],
+                restaurants_filter: [],
+                itemsPub: [   
+                    {value: 'price', title: 'Prices'}, 
+                    {value: 'occupancy', title: 'Occupancy'}
+                ],
+                selectedItemPub: null,
+                pubs_all: [],
+                pubs_filter: []
             }
         },
         async mounted () {
@@ -117,25 +155,73 @@
                 this.apartments_filter = this.apartments_all
             });
 
+            d3.csv('datasets/tables/Restaurants.csv')
+            .then((rows) => {
+                this.restaurants_all = rows.map( r => {                    
+                    return {
+                        id: +r['restaurantId'],
+                        price: +r['foodCost'],
+                        occupancy: +r['maxOccupancy'],
+                        x: +this.getPointX(r['location']),
+                        y: +this.getPointY(r['location'])
+                    }
+                })
+                this.restaurants_filter = this.restaurants_all
+            });
+
+            d3.csv('datasets/tables/Pubs.csv')
+            .then((rows) => {
+                this.pubs_all = rows.map( r => {                    
+                    return {
+                        id: +r['restaurantId'],
+                        price: +r['hourlyCost'],
+                        occupancy: +r['maxOccupancy'],
+                        x: +this.getPointX(r['location']),
+                        y: +this.getPointY(r['location'])
+                    }
+                })
+                this.pubs_filter = this.pubs_all
+            });
+
 
         },
         computed: {
             arrayDataMap(){
+                var data = []
                 switch(this.openAspect){
                     case "house":
-                        return this.apartments_filter.map(d => {
-                            return { 
-                                value: d[this.selectedItemHouse], 
-                                color: this.houseDistributionColor[this.getIndexByValueHouseData(d[this.selectedItemHouse])], 
-                                x: d['x'], 
-                                y: d['y']
-                            }
-                        })
+                        data = this.apartments_filter
+                        break
+                    case "rest":
+                        data = this.restaurants_filter
+                        break
+                    case "pub":
+                        data = this.pubs_filter
+                        break
+                }
+                return data.map(d => {
+                    return { 
+                        value: d[this.selectedItem], 
+                        color: this.houseDistributionColor[this.getIndexByValueHouseData(d[this.selectedItem])], 
+                        x: d['x'], 
+                        y: d['y']
+                    }
+                })
+            },
+            selectedItem(){
+                switch(this.openAspect){
+                    case 'house':
+                        return this.selectedItemHouse
+                    case 'rest':
+                        return this.selectedItemRest
+                    case 'pub':
+                        return this.selectedItemPub
                 }
             },
             houseDistributionTable(){
-                var table = []
+                var table = {}
 
+                table['house'] = []
                 var rent = []
                 rent.push({id: 0, min: 0, max: 500,  count: this.apartments_all.filter(d => d['rent'] <= 500).length, label: '< 500', color: '#f19e18'})
                 rent.push({id: 1, min: 500, max: 700,  count: this.apartments_all.filter(d => d['rent'] > 500 && d['rent'] <= 700).length, label: '500 - 700', color: '#ef8a17'})
@@ -144,56 +230,100 @@
                 rent.push({id: 4, min: 1100, max: 1300,  count: this.apartments_all.filter(d => d['rent'] > 1100 && d['rent'] <= 1300).length, label: '1100 - 1300', color: '#ea4c15'})
                 rent.push({id: 5, min: 1300, max: 1500,  count: this.apartments_all.filter(d => d['rent'] > 1300 && d['rent'] <= 1500).length, label: '1300 - 1500', color: '#e83715'})
                 rent.push({id: 6, min: 1500, max: 2000,  count: this.apartments_all.filter(d => d['rent'] > 1500).length, label: '> 1500', color: '#e62314'})
-                table['rent'] = rent
+                table['house']['rent'] = rent
 
                 var occupancy = []
                 occupancy.push({id: 0, min: 1, max: 1, count: this.apartments_all.filter(d => d['occupancy'] == 1).length, label: '1', color: '#f19e18'})
                 occupancy.push({id: 1, min: 2, max: 2, count: this.apartments_all.filter(d => d['occupancy'] == 2).length, label: '2', color: '#ed7517'})
                 occupancy.push({id: 2, min: 3, max: 3, count: this.apartments_all.filter(d => d['occupancy'] == 3).length, label: '3', color: '#ea4c15'})
                 occupancy.push({id: 3, min: 4, max: 4, count: this.apartments_all.filter(d => d['occupancy'] == 4).length, label: '4', color: '#e62314'})
-                table['occupancy'] = occupancy
+                table['house']['occupancy'] = occupancy
 
                 var rooms = []
                 rooms.push({id: 0, min: 1, max: 1, count: this.apartments_all.filter(d => d['rooms'] == 1).length, label: '1', color: '#f19e18'})
                 rooms.push({id: 1, min: 2, max: 2, count: this.apartments_all.filter(d => d['rooms'] == 2).length, label: '2', color: '#ed7517'})
                 rooms.push({id: 2, min: 3, max: 3, count: this.apartments_all.filter(d => d['rooms'] == 3).length, label: '3', color: '#ea4c15'})
                 rooms.push({id: 3, min: 4, max: 4, count: this.apartments_all.filter(d => d['rooms'] == 4).length, label: '4', color: '#e62314'})
-                table['rooms'] = rooms
+                table['house']['rooms'] = rooms
+
+
+                table['rest'] = []
+                var price = []
+                price.push({id: 0, min: 0, max: 4.5,  count: this.restaurants_all.filter(d => d['price'] <= 4.5).length, label: 'Inexpensive', color: '#f19e18'})
+                price.push({id: 1, min: 4.5, max: 5,  count: this.restaurants_all.filter(d => d['price'] > 4.5 && d['price'] <= 5).length, label: 'Moderately expensive', color: '#ed7517'})
+                price.push({id: 2, min: 5, max: 5.5,  count: this.restaurants_all.filter(d => d['price'] > 5 && d['price'] <= 5.5).length, label: 'Expensive', color: '#ea4c15'})
+                price.push({id: 3, min: 5.5, max: 6,  count: this.restaurants_all.filter(d => d['price'] > 5.5).length, label: 'Very Expensive', color: '#e62314'})
+                table['rest']['price'] = price
+
+                var occupancy = []
+                occupancy.push({id: 0, min: 47, max: 67, count: this.restaurants_all.filter(d => d['occupancy'] <= 67).length, label: '1', color: '#f19e18'})
+                occupancy.push({id: 1, min: 67, max: 86, count: this.restaurants_all.filter(d => d['occupancy'] > 67 && d['occupancy'] <= 86).length, label: '2', color: '#ed7517'})
+                occupancy.push({id: 2, min: 87, max: 106, count: this.restaurants_all.filter(d => d['occupancy'] > 86 && d['occupancy'] <= 106).length, label: '3', color: '#ea4c15'})
+                occupancy.push({id: 3, min: 107, max: 120, count: this.restaurants_all.filter(d => d['occupancy'] > 106).length, label: '4', color: '#e62314'})
+                table['rest']['occupancy'] = occupancy
+
+
+                table['pub'] = []
+                var price = []
+                price.push({id: 0, min: 0, max: 8.5,  count: this.pubs_all.filter(d => d['price'] <= 8.5).length, label: 'Inexpensive', color: '#f19e18'})
+                price.push({id: 1, min: 8.5, max: 10.6,  count: this.pubs_all.filter(d => d['price'] > 8.5 && d['price'] <= 10.6).length, label: 'Moderately expensive', color: '#ed7517'})
+                price.push({id: 2, min: 10.6, max: 12.7,  count: this.pubs_all.filter(d => d['price'] > 10.6 && d['price'] <= 12.7).length, label: 'Expensive', color: '#ea4c15'})
+                price.push({id: 3, min: 12.7, max: 15,  count: this.pubs_all.filter(d => d['price'] > 12.7).length, label: 'Very Expensive', color: '#e62314'})
+                table['pub']['price'] = price
+
+                var occupancy = []
+                occupancy.push({id: 0, min: 0, max: 69, count: this.pubs_all.filter(d => d['occupancy'] <= 69).length, label: '1', color: '#f19e18'})
+                occupancy.push({id: 1, min: 70, max: 79, count: this.pubs_all.filter(d => d['occupancy'] > 69 && d['occupancy'] <= 79).length, label: '2', color: '#ed7517'})
+                occupancy.push({id: 2, min: 80, max: 89, count: this.pubs_all.filter(d => d['occupancy'] > 79 && d['occupancy'] <= 89).length, label: '3', color: '#ea4c15'})
+                occupancy.push({id: 3, min: 90, max: 99, count: this.pubs_all.filter(d => d['occupancy'] > 89).length, label: '4', color: '#e62314'})
+                table['pub']['occupancy'] = occupancy
+
 
                 var empty = [{id: 0, min: Number.NEGATIVE_INFINITY, max: Number.POSITIVE_INFINITY, count: 0, label: '0', color: '#000'}]
-                table[null] = empty
+                table['house'][null] = empty
+                table['rest'][null] = empty
+                table['pub'][null] = empty
                 return table
             },
             houseDistributionData(){
-                return this.houseDistributionTable[this.selectedItemHouse].map(d => d['count'])
+                return this.houseDistributionTable[this.openAspect][this.selectedItem].map(d => d['count'])
             },
             houseDistributionLabel(){
-                return this.houseDistributionTable[this.selectedItemHouse].map(d => d['label'])
+                return this.houseDistributionTable[this.openAspect][this.selectedItem].map(d => d['label'])
             },
             houseDistributionColor(){
-                return this.houseDistributionTable[this.selectedItemHouse].map(d => d['color'])
+                return this.houseDistributionTable[this.openAspect][this.selectedItem].map(d => d['color'])
             }
         },
         methods: {
             getValueByChart(v){
-                switch(this.openAspect){
-                    case "house":
                         this.filterHouseData(v)
-                    break 
-                }
             },
             getIndexByValueHouseData(value){
                 if (value == undefined) return 0
-                return this.houseDistributionTable[this.selectedItemHouse].filter(a => value >= a.min && value <= a.max )[0]['id']
+                return this.houseDistributionTable[this.openAspect][this.selectedItem].filter(a => value >= a.min && value <= a.max )[0]['id']
             },
             filterHouseData(index){
-                if (index == -1)
+                if (index == -1) {
+                    this.pubs_filter = this.pubs_all
+                    this.restaurants_filter = this.restaurants_all
                     this.apartments_filter = this.apartments_all
+                }
                 else {
-                    var min = this.houseDistributionTable[this.selectedItemHouse].filter(a => a.id == index)[0]['min'],
-                        max = this.houseDistributionTable[this.selectedItemHouse].filter(a => a.id == index)[0]['max']
-                   console.log(min,max)
-                    this.apartments_filter = this.apartments_all.filter(r => r[this.selectedItemHouse] >= min && r[this.selectedItemHouse] <= max)
+                    var min = this.houseDistributionTable[this.openAspect][this.selectedItem].filter(a => a.id == index)[0]['min'],
+                        max = this.houseDistributionTable[this.openAspect][this.selectedItem].filter(a => a.id == index)[0]['max']
+
+                    switch(this.openAspect){
+                        case "house":
+                            this.apartments_filter = this.apartments_all.filter(r => r[this.selectedItem] >= min && r[this.selectedItem] <= max)
+                            break
+                        case "rest":
+                            this.restaurants_filter = this.restaurants_all.filter(r => r[this.selectedItem] >= min && r[this.selectedItem] <= max)
+                            break
+                        case "pub":
+                            this.pubs_filter = this.pubs_all.filter(r => r[this.selectedItem] >= min && r[this.selectedItem] <= max)
+                            break
+                    }
                 }
             },
             getPointX(value){
