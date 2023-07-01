@@ -44,7 +44,7 @@ export default {
           title: 'Demografia',
           link: `demografia`,
           img: 'src\\assets\\icons\\people.png',
-        },
+        },        
         // Consider the social activities in the community. What patterns do you see in the social networks in the town? 
         // Describe up to ten significant patterns you observe, with evidence and rationale. Limit your response to 10 images and 500 words.
         {
@@ -55,9 +55,9 @@ export default {
         // Identify the predominant business base of the town, and describe patterns you observe. Limit your response to 10 images and 500 words.
         // Mappa con PUB/Risto e Jobs, slider che segna l'ora e indicatore dei presenti in quel luogo (Check maxOccupancy superata diventa CRITIC)
         {
-          title: 'Negozi',
+          title: 'Mappa',
           link: `edifici`,
-          img: 'src\\assets\\icons\\store.png',
+          img: 'src\\assets\\icons\\treasure-map.png',
         },
         // {
         //   title: 'Pattern of life',

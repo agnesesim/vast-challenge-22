@@ -1,63 +1,60 @@
 <script lang="ts">
-import {
-  Chart as ChartJS,
-  Title,
-  Tooltip,
-  Legend,
-  BarElement,
-  CategoryScale,
-  LinearScale
-} from 'chart.js'
-import { Bar } from 'vue-chartjs'
-
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
+import * as d3 from 'd3'
+import SocialNetwork from '../components/relazioni/SocialNetwork.vue'
 
 export default {
-  name: 'App',
-  components: {
-    Bar
-  },
+    name: 'App',
+    components: {
+        SocialNetwork
+    },
     data(){
         return {
-            data:{
-                labels: [
-                    'January',
-                    'February',
-                    'March',
-                    'April',
-                    'May',
-                    'June',
-                    'July',
-                    'August',
-                    'September',
-                    'October',
-                    'November',
-                    'December'
-                ],
-                datasets: [
-                    {
-                    label: 'Data One',
-                    backgroundColor: '#f87979',
-                    data: [40, 20, 12, 39, 10, 40, 39, 80, 40, 20, 12, 11]
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false
-            }
+            loaded: false,
+            links: [],
+            nodes: []
         }
+    },
+    async mounted () {
+        d3.csv('datasets/journals/SocialNetworkEdited.csv')
+        .then((rows) => {
+            this.links = rows
+
+            this.loaded = true
+        });
+
+        d3.csv('datasets/tables/Participants.csv')
+        .then((rows) => {
+            this.nodes = rows
+        });
+    },
+    computed: {
+        selectedNodes(){
+            return this.nodes.map( n =>  {
+                return { id: n.participantId, group: n.interestGroup }
+            })
+        },
+        linkOfNodes(){
+            return this.links.slice(0, 10000)
+        },
     }
 }
 </script>
 
 <template>
     <div class="relation">
-        <h1>ci sei</h1>
-        <v-row class="my-1">
-            <v-col>
-                <v-card title="Age">
-                    <Bar :data="data" :options="options" style="max-height: 350px;"/>
+        <v-row>
+            <v-col sm="12">
+                <v-card class="pa-3">
+                    <div class="d-flex justify-center" v-if="loaded">
+                        <SocialNetwork 
+                            :nodes="selectedNodes" 
+                            :links="linkOfNodes"
+                        ></SocialNetwork>
+                    </div>
+                    <div class="d-column pa-3" v-else>
+                        <v-skeleton-loader type="list-item-avatar" width="50%"></v-skeleton-loader>
+                        <v-skeleton-loader  height="500px"></v-skeleton-loader>
+                    </div>
                 </v-card>
             </v-col>
         </v-row>
